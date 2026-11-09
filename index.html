@@ -57,20 +57,12 @@
 
   <section class="tabpanel active" id="tab-try" role="tabpanel">
     <h3>Paste a ticket and see where it goes</h3>
-    <p class="lede">The routing rules run here in your browser, with no API calls. Add your own Anthropic key below if you want the agent to write the reply as well.</p>
+    <p class="lede">The routing rules run here in your browser. It shows the category, the signals, the help article it would cite and whether the reply would go out on its own.</p>
     <div class="cols">
       <div>
         <div class="formrow"><label class="field" for="tryFrom">Sender's role</label><input type="text" id="tryFrom" value="CFO"></div>
         <div class="formrow"><label class="field" for="tryText">Ticket</label><textarea id="tryText">Our agent issued a refund to the wrong customer this morning. How do we reverse it, and how do we stop it happening again?</textarea></div>
         <button class="btn-ink" id="tryBtn">Route this ticket</button>
-        <details class="byok">
-          <summary>Also draft the reply with your own Anthropic key (optional)</summary>
-          <div class="formrow" style="margin-top:10px">
-            <label class="field" for="apiKey">Anthropic API key</label>
-            <input type="password" id="apiKey" autocomplete="off" placeholder="sk-ant-…">
-            <div class="hint">Sent only from your browser to api.anthropic.com for this one request. It's never stored or sent anywhere else.</div>
-          </div>
-        </details>
       </div>
       <div id="tryResult"><div class="result-empty">The routing decision appears here.</div></div>
     </div>
@@ -124,8 +116,8 @@
       <div class="card"><h4>The agent (drafting)</h4><ul>
         <li>Reads the ticket, sorts it into a category, flags the signals in the rubric and picks a help article</li>
         <li>Writes the reply and rates its confidence that the reply fully answers the ticket</li>
-        <li>Drafts for the 10 inbox tickets were pre-run against the rubric on 9 Nov 2026, so the page needs no API key</li>
-        <li>On "Try your own ticket" with a key, the same prompt runs live (Claude via the Anthropic API, structured JSON output)</li>
+        <li>Drafts for the 10 inbox tickets were pre-run against the rubric on 9 Nov 2026 and saved with the page</li>
+        <li>The page itself makes no model calls. Pasted tickets are routed by the rules, not drafted</li>
       </ul></div>
       <div class="card"><h4>The routing (deciding)</h4><ul>
         <li>Plain rules, not the model, decide send or escalate, so the policy is explicit and testable</li>

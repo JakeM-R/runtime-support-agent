@@ -135,8 +135,6 @@ textarea { min-height: 120px; resize: vertical; }
 .btn-ink:disabled { opacity: .5; cursor: default; }
 .formrow { margin-bottom: 12px; }
 .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
-details.byok { margin-top: 14px; border-top: 1px solid var(--border-light); padding-top: 12px; }
-details.byok summary { cursor: pointer; font-size: 13px; font-weight: 500; }
 .result-empty { color: var(--muted); font-size: 14px; border: 1px dashed var(--border); border-radius: 6px; padding: 24px; text-align: center; }
 .err { color: var(--red); font-size: 13px; margin-top: 8px; }
 
