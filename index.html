@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Runtime Support Agent</title>
+<meta name="description" content="Drop in a support ticket. Get the reply drafted, or escalated with the context attached. A demo built for Runtime.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="strip">Demo built for <b>Runtime</b> by Jake Makking-Robinson · tickets, companies and help docs are illustrative</div>
+
+<header class="hero wrap">
+  <h1>Drop in a support ticket. Get the reply drafted, <em>or escalated with the context attached.</em></h1>
+  <p class="sub">Routine questions get answered on their own. Nothing sensitive goes out without a person approving it.</p>
+  <div class="steps">
+    <div class="step"><span class="badge">1</span><div><h3>Read</h3><p>Sorts the ticket: how-to, bug, access, security, billing or exec escalation.</p></div></div>
+    <div class="step"><span class="badge">2</span><div><h3>Draft</h3><p>Writes the reply from the help docs and cites the article it used.</p></div></div>
+    <div class="step"><span class="badge">3</span><div><h3>Route</h3><p>Sends if confident. Otherwise asks for approval with the trace attached. Bugs go to engineering.</p></div></div>
+  </div>
+
+  <section class="tool" aria-label="Support inbox demo">
+    <div class="toolbar">
+      <span class="title">support-agent · inbox</span>
+      <div class="counts" id="counts"></div>
+      <div class="controls">
+        <label class="slider">Auto-send above
+          <input type="range" id="threshold" min="0.5" max="0.99" step="0.01" value="0.80" aria-label="Confidence threshold for auto-send">
+          <output id="thresholdOut">0.80</output>
+        </label>
+        <button class="btn-ghost" id="rulesBtn" aria-expanded="false" aria-controls="rulesPanel">Escalation rules</button>
+      </div>
+    </div>
+    <div class="rules-panel" id="rulesPanel">
+      <p>Tickets matching a ticked rule always wait for a person, however confident the agent is. Untick one to see what would go out on its own.</p>
+      <div class="rules-grid" id="rulesGrid"></div>
+    </div>
+    <div class="panes">
+      <nav class="inbox" id="inbox" aria-label="Tickets"></nav>
+      <article class="detail" id="detail" aria-live="polite"></article>
+    </div>
+  </section>
+</header>
+
+<main class="below wrap">
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-tab="try">Try your own ticket</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="rubric">Rubric</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="evals">Evals</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="docs">Help docs</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="how">How it works</button>
+  </div>
+
+  <section class="tabpanel active" id="tab-try" role="tabpanel">
+    <h3>Paste a ticket and see where it goes</h3>
+    <p class="lede">The routing rules run here in your browser, with no API calls. Add your own Anthropic key below if you want the agent to write the reply as well.</p>
+    <div class="cols">
+      <div>
+        <div class="formrow"><label class="field" for="tryFrom">Sender's role</label><input type="text" id="tryFrom" value="CFO"></div>
+        <div class="formrow"><label class="field" for="tryText">Ticket</label><textarea id="tryText">Our agent issued a refund to the wrong customer this morning. How do we reverse it, and how do we stop it happening again?</textarea></div>
+        <button class="btn-ink" id="tryBtn">Route this ticket</button>
+        <details class="byok">
+          <summary>Also draft the reply with your own Anthropic key (optional)</summary>
+          <div class="formrow" style="margin-top:10px">
+            <label class="field" for="apiKey">Anthropic API key</label>
+            <input type="password" id="apiKey" autocomplete="off" placeholder="sk-ant-…">
+            <div class="hint">Sent only from your browser to api.anthropic.com for this one request. It's never stored or sent anywhere else.</div>
+          </div>
+        </details>
+      </div>
+      <div id="tryResult"><div class="result-empty">The routing decision appears here.</div></div>
+    </div>
+  </section>
+
+  <section class="tabpanel" id="tab-rubric" role="tabpanel">
+    <h3>The support SOP the agent works to</h3>
+    <p class="lede">The agent writes the drafts. These rules decide what it's allowed to send. They're the same rules as the toggles above the inbox.</p>
+    <div class="cols">
+      <div class="card"><h4>Always goes to a person</h4><ul>
+        <li>The sender is an exec (CEO, COO, CFO…)</li>
+        <li>Money moved, or an agent acted without approval</li>
+        <li>Security, compliance or data requests, including anything asking for keys or credentials</li>
+        <li>Production bugs or outages (also filed to engineering)</li>
+        <li>Billing disputes</li>
+        <li>Renewal or churn language</li>
+        <li>An access request from someone who isn't a verified admin</li>
+        <li>A how-to with no help article to cite</li>
+        <li>Confidence below the threshold</li>
+      </ul></div>
+      <div class="card"><h4>Can be sent automatically</h4><ul>
+        <li>A how-to answered by a help article</li>
+        <li>An access request from a verified workspace admin</li>
+        <li>Acknowledging a feature request (logged for product, no promises)</li>
+        <li>A clarifying question when the ticket is too vague to act on</li>
+      </ul>
+      <h4 style="margin-top:14px">How replies are written</h4><ul>
+        <li>Lead with the answer or the next step, and when it will happen</li>
+        <li>Only state what a help article or the ticket supports</li>
+        <li>No apology padding. Sign off as Runtime Support</li>
+        <li>Cite the article used</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <section class="tabpanel" id="tab-evals" role="tabpanel">
+    <h3>Routing evals</h3>
+    <p class="lede" id="evalLede"></p>
+    <div class="table-scroll"><table id="evalTable"><thead><tr><th>Case</th><th>What it tests</th><th>Sender</th><th>Expected</th><th>Got</th><th></th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section class="tabpanel" id="tab-docs" role="tabpanel">
+    <h3>Help docs the agent can cite</h3>
+    <p class="lede">Demo articles written for this page. They're not Runtime's real documentation. The agent can only state what one of these says, or ask.</p>
+    <div class="cols" id="docsList"></div>
+  </section>
+
+  <section class="tabpanel" id="tab-how" role="tabpanel">
+    <h3>How it works</h3>
+    <div class="cols">
+      <div class="card"><h4>The agent (drafting)</h4><ul>
+        <li>Reads the ticket, sorts it into a category, flags the signals in the rubric and picks a help article</li>
+        <li>Writes the reply and rates its confidence that the reply fully answers the ticket</li>
+        <li>Drafts for the 10 inbox tickets were pre-run against the rubric on 9 Nov 2026, so the page needs no API key</li>
+        <li>On "Try your own ticket" with a key, the same prompt runs live (Claude via the Anthropic API, structured JSON output)</li>
+      </ul></div>
+      <div class="card"><h4>The routing (deciding)</h4><ul>
+        <li>Plain rules, not the model, decide send or escalate, so the policy is explicit and testable</li>
+        <li>The threshold slider and rule toggles re-route the inbox live</li>
+        <li>Bugs get an engineering summary. Feature requests get tagged for product</li>
+        <li>Static page, no backend, no accounts. Source on <a href="https://github.com/JakeM-R/runtime-support-agent">GitHub</a></li>
+      </ul></div>
+    </div>
+  </section>
+
+  <footer>
+    <blockquote>"Build and run internal agents on Runtime for our own operations, like customer onboarding, support triage, sales ops…" and "Be our toughest internal user, feeding bugs and product ideas straight to engineering."<br><span style="color:var(--muted)">Founding AI Ops, Runtime</span></blockquote>
+    Built by Jake Makking-Robinson as part of an application. Not affiliated with Runtime. All companies, tickets and help articles are illustrative.
+  </footer>
+</main>
+
+<script src="data.js"></script>
+<script src="engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
